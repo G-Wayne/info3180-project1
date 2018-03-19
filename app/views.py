@@ -5,17 +5,25 @@ Werkzeug Documentation:  http://werkzeug.pocoo.org/documentation/
 This file creates your application.
 """
 
-from app import app, db, login_manager
+from app import app, db
 from flask import render_template, request, redirect, url_for, flash
-from flask_login import login_user, logout_user, current_user, login_required
-from forms import LoginForm
 from models import UserProfile
+from forms import NewProfileForm
+from werkzeug.utils import secure_filename
+import time 
+import datetime
+import os
 
 
 
 ###
 # Routing for your application.
 ###
+
+def format_date_joined():
+    """returns the date in the format Month, Year (for example Feb, 2018)"""
+    return datetime.date.today().strftime("%b, %d,%Y")
+
 
 @app.route('/')
 def home():
@@ -28,83 +36,57 @@ def about():
     """Render the website's about page."""
     return render_template('about.html')
 
-
-@app.route("/login", methods=["GET", "POST"])
-def login():
-    if current_user.is_authenticated:
-        # if user is already logged in, just redirect them to our secure page
-        # or some other page like a dashboard
-        return redirect(url_for('secure_page'))
     
+@app.route('/profile', methods=["GET", "POST"])
+def profile():
+    newProfileForm = NewProfileForm()
     
-    # Here we use a class of some kind to represent and validate our
-    # client-side form data. For example, WTForms is a library that will
-    # handle this for us, and we use a custom LoginForm to validate.
-    form = LoginForm()
-    # Login and validate the user.
-    if request.method == "POST" and form.validate_on_submit():
-        # change this to actually validate the entire form submission
-        # and not just one field
-        if form.username.data and form.password.data :
-            # Get the username and password values from the form.
-            
-            # Query our database to see if the username and password entered
-            # match a user that is in the database.
-            username = form.username.data
-            password = form.password.data
-
-            # using your model, query database for a user based on the username
-            # and password submitted
-            # store the result of that query to a `user` variable so it can be
-            # passed to the login_user() method.
-            
-            user = UserProfile.query.filter_by(username=username, password=password).first()
-            
-            if user is not None:
-                remember_me = False
-
-                if 'remember_me' in request.form:
-                    remember_me = True
-                    
-                # If the user is not blank, meaning if a user was actually found,
-                # then login the user and create the user session.
-                # user should be an instance of your `User` class
-                # get user id, load into session
-                login_user(user, remember=remember_me)
+    if request.method == "POST" and newProfileForm.validate_on_submit():
+        firstname = newProfileForm.firstname.data
+        lastname = newProfileForm.lastname.data
+        gender = newProfileForm.gender.data
+        email = newProfileForm.email.data
+        location = newProfileForm.location.data
+        bio = newProfileForm.bio.data
+        created_on = format_date_joined()
+        photo = newProfileForm.photo.data
+        image = secure_filename(photo.filename)
+        photo.save(os.path.join(app.config['UPLOAD_FOLDER'], image))
+        user = UserProfile(first_name = firstname, last_name = lastname, gender = gender, email = email, location = location, bio = bio, image = image, created_on = created_on)
+        db.session.add(user)
+        db.session.commit()
                 
-                # remember to flash a message to the user
-                flash('Logged in successfully.', 'success')
-            
-                next_page = request.args.get('next')
-                return redirect(next_page or url_for("secure_page"))  # they should be redirected to a secure-page route instead
-            else:
-                flash('Username or Password is incorrect.', 'danger')
-            
-    flash_errors(form)
-    return render_template("login.html", form=form)
+        flash("Profile successfully added", "success")
+        return redirect(url_for("profiles"))
+    flash_errors(newProfileForm)
+    return render_template("profile.html", newProfileForm = newProfileForm)
     
+@app.route('/profiles')
+def profiles():
+    image_names= get_uploaded_images()
+    users = UserProfile.query.all()
+    return render_template('profiles.html', users=users, image_names= image_names)
+ 
+@app.route('/profile/<userid>')
+def userProfile(userid):
+    user = UserProfile.query.filter_by(id=userid).first()
+    image_names= get_uploaded_images()
+    return render_template('user_profile.html', user=user, image_names=image_names)
     
-@app.route('/secure-page')
-@login_required
-def secure_page():
-    """Render a secure page on our website that only logged in users can access."""
-    return render_template('secure_page.html')
-    
-    
-@app.route("/logout")
-@login_required
-def logout():
-    # Logout the user and end the session
-    logout_user()
-    flash('You have been logged out.', 'danger')
-    return redirect(url_for('home'))
+ 
 
-
-# user_loader callback. This callback is used to reload the user object from
-# the user ID stored in the session
-@login_manager.user_loader
-def load_user(id):
-    return UserProfile.query.get(int(id))
+def get_uploaded_images():
+    
+    #Get contents of Current working directory
+    rootdir = os.getcwd()
+    print rootdir
+    filenames = []
+            
+    #Traversing root directory recursively
+    for subdir, dirs, files in os.walk(rootdir + '/app/static/uploads'):
+	    for file in files:
+	        filenames.append(os.path.join(subdir, file).split('/')[-1])
+    return filenames
 
 ###
 # The functions below should be applicable to all Flask apps.
