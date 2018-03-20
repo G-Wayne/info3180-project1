@@ -6,7 +6,7 @@ This file creates your application.
 """
 
 from app import app, db
-from flask import render_template, request, redirect, url_for, flash
+from flask import render_template, request, redirect, url_for, flash, jsonify
 from models import UserProfile
 from forms import NewProfileForm
 from werkzeug.utils import secure_filename
@@ -34,7 +34,7 @@ def home():
 @app.route('/about/')
 def about():
     """Render the website's about page."""
-    return render_template('about.html')
+    return render_template('about.html', name = "Gawayne Lawton")
 
     
 @app.route('/profile', methods=["GET", "POST"])
@@ -56,7 +56,7 @@ def profile():
         db.session.add(user)
         db.session.commit()
                 
-        flash("Profile successfully added", "success")
+        flash("Profile was successfully added", "success")
         return redirect(url_for("profiles"))
     flash_errors(newProfileForm)
     return render_template("profile.html", newProfileForm = newProfileForm)
@@ -64,13 +64,39 @@ def profile():
 @app.route('/profiles')
 def profiles():
     image_names= get_uploaded_images()
-    users = UserProfile.query.all()
-    return render_template('profiles.html', users=users, image_names= image_names)
+    # users = UserProfile.query.all()
+    users = db.session.query(UserProfile).all()
+    
+    if request.method == 'GET':
+        return render_template('profiles.html', users = users, image_names= image_names)
+    elif request.method == "POST" and request.headers['Content-Type'] == "application/json":
+        users_lst = []
+        for user in users:
+            users_lst += [{"firstname": user.first_name+user.get_id, "userid":user.get_id}]
+        json_user = {"users":users_lst}
+        return jsonify(json_user)
+    else:
+        flash("Unable to retrieve your request")
+        return redirect(url_for('home'))
+    
  
 @app.route('/profile/<userid>')
 def userProfile(userid):
     user = UserProfile.query.filter_by(id=userid).first()
     image_names= get_uploaded_images()
+    
+    if request.method=='GET':
+        return render_template('user_profile.html', user =user, image_names=image_names)
+    elif request.method == "POST" and request.headers['Content-Type'] == "application/json":
+        json_user = {}
+        json_user["userid"] = user.id
+        json_user["username"] = user.first_name + user.last_name
+        json_user["email"] = user.email
+        json_user["location"] = user.location
+        json_user["bio"] = user.bio
+        json_user["profile_created_on"] = user.created_on
+        json_user["image"] = user.id + '.jpg'
+        return jsonify(json_user)
     return render_template('user_profile.html', user=user, image_names=image_names)
     
  

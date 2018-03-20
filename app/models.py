@@ -6,7 +6,7 @@ class UserProfile(db.Model):
     first_name = db.Column(db.String(80))
     last_name = db.Column(db.String(80))
     gender = db.Column(db.String(10))
-    email = db.Column(db.String(120), unique=True)
+    email = db.Column(db.String(80), unique=True)
     location =  db.Column(db.String(50))
     bio = db.Column(db.String(255))
     image = db.Column(db.String(80))

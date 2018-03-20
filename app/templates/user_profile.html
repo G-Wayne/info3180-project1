@@ -2,13 +2,30 @@
 
 {% block main %}
     {% include 'flash_messages.html' %}
+    <center>
+    <div class="larger" >
+    <div class="left">
     <img src="{{ url_for('static', filename = 'uploads/' + user.image) }}" />
-    <h3>{{ user.first_name }} {{ user.last_name }}</h3>
-    {{ user.email }}
-    {{ user.location }}
-    {{ "Joined on" }} {{ user.created_on }}
-    <h4>{{ "About Me" }}</h4>
-    {{ user.bio }}<br>
-    <button type="button" class="btn btn-primary">Send Message</button>
-    <button type="button" class="btn btn-primary">Follow</button>
+    </div>
+    <div class="right">
+        <ul style="list-style: none;">
+        <li><h2>&emsp;&emsp;&emsp;{{ user.first_name }} {{ user.last_name}}</h2></li>
+        <li>&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;<i class="fa fa-envelope-o"></i>&emsp;{{ user.email }}</li>
+        <li>&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;<i class="fa fa-map-marker"></i>&emsp;{{  user.location }}</li>
+        <li>&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;<i class="fa fa-calendar-o"></i>&emsp;{{ "Joined on" }} {{ user.created_on }}</li>
+        </ul>
+        <p>
+        <h4>{{ "About Me" }}</h4>
+        </p>
+        <p>
+            {{user.bio}}
+        </p>
+        <center>
+        <ul style="list-style: none;">
+        <li><button id="bttn" type="submit">Send Message</button>&emsp;&emsp;<button id="bttn2" type="submit">Follow</button></li>
+        </ul>
+        </center>
+
+</div>
+</center>
 {% endblock %}
