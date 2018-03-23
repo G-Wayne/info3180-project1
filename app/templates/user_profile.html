@@ -2,30 +2,37 @@
 
 {% block main %}
     {% include 'flash_messages.html' %}
-    <center>
-    <div class="larger" >
+
+    <div class="userBox" >
     <div class="left">
-    <img src="{{ url_for('static', filename = 'uploads/' + user.image) }}" />
-    </div>
-    <div class="right">
+    <img class"userimage" src="{{ url_for('static', filename = 'uploads/' + user.image) }}" />
+    
+    <div class="user_info">
         <ul style="list-style: none;">
-        <li><h2>&emsp;&emsp;&emsp;{{ user.first_name }} {{ user.last_name}}</h2></li>
-        <li>&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;<i class="fa fa-envelope-o"></i>&emsp;{{ user.email }}</li>
-        <li>&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;<i class="fa fa-map-marker"></i>&emsp;{{  user.location }}</li>
-        <li>&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;<i class="fa fa-calendar-o"></i>&emsp;{{ "Joined on" }} {{ user.created_on }}</li>
+        <li><h2>{{ user.first_name }} {{ user.last_name}}</h2></li>
+        <li><i class="fa fa-envelope-o"></i> <span class = "data">{{ user.email }}</span></li>
+        <li><i class="fa fa-map-marker"></i> <span class = "data">{{  user.location }}</span></li>
+        <li><i class="fa fa-calendar-o"></i> <span class = "data">{{ "Joined on" }} {{ user.created_on }}</span></li>
         </ul>
+    </div>
+    </div>
+    
+    <div class= "about">
         <p>
         <h4>{{ "About Me" }}</h4>
         </p>
         <p>
             {{user.bio}}
         </p>
+        </div>
+        
+        <div class="buttons">   
         <center>
         <ul style="list-style: none;">
-        <li><button id="bttn" type="submit">Send Message</button>&emsp;&emsp;<button id="bttn2" type="submit">Follow</button></li>
+        <li><button id="btn1">Send Message</button>  <button id="btn2">Follow</button></li>
         </ul>
         </center>
-
+        </div> 
 </div>
-</center>
+
 {% endblock %}

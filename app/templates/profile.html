@@ -3,8 +3,8 @@
 
 {% block main %}
   {% include 'flash_messages.html' %}
-  <h1 class="page-header">Add Profile</h1>
-  <div class="larger">
+  <h1 class="heading">Add Profile</h1>
+  <div class="profileBox">
   <div class="container">
     <form action="{{ url_for('profile') }}" method="POST" enctype="multipart/form-data">
        {{ newProfileForm.csrf_token }}
