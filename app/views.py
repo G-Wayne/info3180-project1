@@ -72,11 +72,11 @@ def profiles():
     elif request.method == "POST" and request.headers['Content-Type'] == "application/json":
         users_lst = []
         for user in users:
-            users_lst += [{"firstname": user.first_name+user.get_id, "userid":user.get_id}]
+            users_lst += [{"userid":user.get_id, "firstname": user.first_name,"lastname": user.last_name, "gender": user.gender, "location":user.location}]
         json_user = {"users":users_lst}
         return jsonify(json_user)
     else:
-        flash("Unable to retrieve your request")
+        flash('No user was found', 'danger')
         return redirect(url_for('home'))
     
  
