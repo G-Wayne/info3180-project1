@@ -5,7 +5,7 @@ from flask_sqlalchemy import SQLAlchemy
 app = Flask(__name__)
 app.config['SECRET_KEY'] = "supers3cre+br@in"
 # app.config['SQLALCHEMY_DATABASE_URI'] = "postgresql://gawayne:postgres@localhost/project1"
-app.config['SQLALCHEMY_DATABASE_URI'] = "postgresql://lhzxwlzmcdjbtc:31cfcc8f1f2b0ca28eaebb71b0e6b1835f67335f9298b6580b6c8406f409c2ee@ec2-23-21-198-69.compute-1.amazonaws.com:5432/dda70olebu408d"
+app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://zhibonanwowmqv:8079725deaf091ba8cc3ecad9cc399a2e5a0bb0c88de3dfa4db3facfe763db7b@ec2-174-129-28-38.compute-1.amazonaws.com:5432/d1hsgh7pccset5'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = True # added just to suppress a warning
 UPLOAD_FOLDER = './app/static/uploads'
 

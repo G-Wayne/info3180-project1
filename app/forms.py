@@ -12,5 +12,5 @@ class NewProfileForm(FlaskForm):
     email = StringField("Email", validators = [InputRequired(), Email()])
     location = StringField("Location", validators = [InputRequired()])
     bio = TextAreaField("Biography", validators = [InputRequired()])
-    photo = FileField("Profile Photo", validators=[FileRequired(), FileAllowed(['jpg','png','jpeg'], 'Only image files accepted.')])    
+    photo = FileField("Profile Picture", validators=[FileRequired(), FileAllowed(['jpg','png','jpeg'], 'Only image files accepted.')])    
     submit = SubmitField("Add Profile")
